@@ -16,6 +16,7 @@ function handleShowBranches(?string $errorMessage = null): void
     {
         foreach ($branches as $branch) {
             $employeeCount = 0;
+            // сделать асоциативный массив который будет отоброжать id фильяла на число сотрудников
             foreach ($branchesWithEmployeeCount as $row) {
                 if ($row['branch_id'] === $branch['id']) {
                     $employeeCount = $row['employee_count'];
@@ -40,20 +41,31 @@ function handleAddBranchForm(): void
 {
     $city = $_POST['city'] ?? null;
     $address = $_POST['address'] ?? null;
-    if (!$city || !$address)
-    {
+    if (!$city || !$address) {
         handleShowBranches('Все поля обязательны для заполнения');
         http_response_code(HTTP_STATUS_400_BAD_REQUEST);
         return;
     }
-    $connection = connectDatabase();
-    saveBranchToDatabase($connection, [
-        'city' => $city,
-        'address' => $address
-    ]);
-    writeRedirectSeeOther('/');
-}
 
+    $connection = connectDatabase();
+    try {
+        $branchId = saveBranchToDatabase($connection, [
+            'city' => $city,
+            'address' => $address
+        ]);
+
+        if ($branchId) {
+            http_response_code(201);
+            echo json_encode(['branch_id' => $branchId]);
+        } else {
+            throw new Exception("Не удалось сохранить филиал");
+        }
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => $e->getMessage()]);
+    }
+    //writeRedirectSeeOther('/');
+}
 
 try {
     if (isRequestHttpMethod(HTTP_METHOD_GET)) 

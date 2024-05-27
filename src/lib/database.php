@@ -37,7 +37,7 @@ function getAllBranchInDatabase(PDO $connection): ?array
     $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
     return $rows ?: null;
 }
-
+//TODO: переименновать функцию 
 function getAllEmployeesBranchInDatabase(PDO $connection): array
 {
     $query = <<<SQL
@@ -109,6 +109,7 @@ function findBranchInDatabase(PDO $connection, int $id): ?array
     return $row ?: null;
 }
 
+// TODO: переименновать функцию
 function getEmployeesBranchInDatabase(PDO $connection, int $id): ?array
 {
     $query = <<<SQL
@@ -192,7 +193,7 @@ function deleteEmployeeFromBranch(PDO $connection, int $id): void
     $statement = $connection->prepare($query);
     $statement->execute(['id' => $id]);
 }
-
+// TODO : убоать массив использовать только ID и значение либр избавииться от всех запросов
 function changeFullNameEmployee(PDO $connection, array $employeeData): int
 {
     $query = <<<SQL
